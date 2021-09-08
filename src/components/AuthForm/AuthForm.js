@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { useDispatch } from 'react-redux';
 import { useLocation } from 'react-router';
 import { signIn, signUp } from '../../redux/auth/auth-operations';
@@ -14,7 +14,11 @@ export default function AuthForm() {
   const dispatch = useDispatch();
   const { pathname } = useLocation();
 
-  const isSignUpForm = () => pathname === '/register';
+  useEffect(() => {
+    setUser(initialState);
+  }, [pathname]);
+
+  const isRegisterForm = () => pathname === '/register';
 
   const handleChangeInput = e => {
     const { name, value } = e.target;
@@ -24,14 +28,14 @@ export default function AuthForm() {
   const handleSubmit = e => {
     e.preventDefault();
     const { email, password } = user;
-    isSignUpForm()
+    isRegisterForm()
       ? dispatch(signUp(user))
       : dispatch(signIn({ email, password }));
   };
 
   return (
     <form onSubmit={handleSubmit}>
-      {isSignUpForm() && (
+      {isRegisterForm() && (
         <label>
           Name
           <input
@@ -60,7 +64,7 @@ export default function AuthForm() {
           onChange={handleChangeInput}
         />
       </label>
-      <button type="submit">{isSignUpForm() ? 'SignUp' : 'SignIn'}</button>
+      <button type="submit">{isRegisterForm() ? 'SignUp' : 'SignIn'}</button>
     </form>
   );
 }

@@ -1,70 +1,59 @@
 // import { lazy, Suspense } from 'react';
-import { useEffect } from 'react';
+import { useEffect, useMemo } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
-import { Switch, Route } from 'react-router-dom';
+import { Switch, useHistory } from 'react-router-dom';
 import { ToastContainer } from 'react-toastify';
 
 import Appbar from './components/AppBar/AppBar';
-import Container from './components/Container';
+import PrivateRoute from './components/PrivateRoute/PrivateRoute';
+import PublicRoute from './components/PublicRoute/PublicRoute';
 
+// import HomePage from './pages/HomePage';
 import AuthPage from './pages/AuthPage';
-import HomePage from './pages/HomePage';
+import ContactsPage from './pages/ContactsPage';
 import NotFoundPage from './pages/NotFoundPage';
-import { resetUser } from './redux/auth/auth-operations';
 
-import { getIsLoggedIn } from './redux/auth/auth-selectors';
-import { getContacts } from './redux/contacts/contacts-operations';
+import { resetUser } from './redux/auth/auth-operations';
+import { getIsResetingUser } from './redux/auth/auth-selectors';
 
 function App() {
-  const isLoggedIn = useSelector(getIsLoggedIn);
+  const isResetingUser = useSelector(getIsResetingUser);
   const dispatch = useDispatch();
+  const history = useHistory();
+
+  useMemo(() => history.push('/login'), [history]);
 
   useEffect(() => {
     dispatch(resetUser());
   }, [dispatch]);
 
-  useEffect(() => {
-    if (!isLoggedIn) {
-      return;
-    }
-    dispatch(getContacts());
-  }, [dispatch, isLoggedIn]);
-
   return (
-    <>
-      <Appbar />
+    !isResetingUser && (
+      <>
+        <Appbar />
 
-      {/* <Suspense fallback={<LoaderSpinner />}> */}
-      <Switch>
-        <Route path="/" exact>
-          <Container>
-            <h1>Home</h1>
-          </Container>
-        </Route>
+        {/* <Suspense fallback={<LoaderSpinner />}> */}
+        <Switch>
+          <PublicRoute path="/register" restricted redirectedTo="/contacts">
+            <AuthPage />
+          </PublicRoute>
 
-        {!isLoggedIn && (
-          <>
-            <Route path="/register" exact>
-              <AuthPage />
-            </Route>
+          <PublicRoute path="/login" restricted redirectedTo="/contacts">
+            <AuthPage />
+          </PublicRoute>
 
-            <Route path="/login" exact>
-              <AuthPage />
-            </Route>
-          </>
-        )}
+          <PrivateRoute path="/contacts" redirectedTo="/login">
+            <ContactsPage />
+          </PrivateRoute>
 
-        <Route path="/contacts" exact>
-          <HomePage />
-        </Route>
-
-        <Route>
-          <NotFoundPage />
-        </Route>
-      </Switch>
-      {/* </Suspense> */}
-      <ToastContainer autoClose={3000} />
-    </>
+          <PublicRoute>
+            <NotFoundPage />
+          </PublicRoute>
+        </Switch>
+        {/* </Suspense> */}
+        <ToastContainer autoClose={3000} />
+      </>
+    )
   );
 }
 

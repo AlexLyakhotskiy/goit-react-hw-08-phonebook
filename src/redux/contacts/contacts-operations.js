@@ -27,11 +27,19 @@ export const deleteContact = createAsyncThunk(
   },
 );
 
-// export const editContact = createAsyncThunk(
-//   'contacts/editContact',
-//   async contact => {
-//     const { name, email, id } = contact;
-//     await axios.patch(`/contacts/${id}`, { name, email });
-//     return { name, email };
-//   },
-// );
+export const editContact = createAsyncThunk(
+  'contacts/editContact',
+  async contact => {
+    const { name, number, id } = contact;
+    const editContact = {};
+
+    Object.entries({ name, number }).forEach(([key, value]) => {
+      if (value.trim()) {
+        editContact[key] = value;
+      }
+    });
+
+    await axios.patch(`/contacts/${id}`, editContact);
+    return { id, ...editContact };
+  },
+);
