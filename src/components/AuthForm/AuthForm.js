@@ -1,70 +1,117 @@
-import React, { useEffect, useState } from 'react';
 import { useDispatch } from 'react-redux';
 import { useLocation } from 'react-router';
+import { useFormik } from 'formik';
+import * as yup from 'yup';
+
+import Button from '@material-ui/core/Button';
+import TextField from '@material-ui/core/TextField';
+
 import { signIn, signUp } from '../../redux/auth/auth-operations';
 
-const initialState = {
-  name: '',
-  email: '',
-  password: '',
-};
+import { useStyles } from './AuthFormStyled';
 
-export default function AuthForm() {
-  const [user, setUser] = useState(initialState);
+const validationSchemaReg = yup.object({
+  name: yup.string('Enter your name').required('Name is required'),
+  email: yup
+    .string('Enter your email')
+    .email('Enter a valid email')
+    .required('Email is required'),
+  password: yup
+    .string('Enter your password')
+    .min(7, 'Password should be of minimum 7 characters length')
+    .max(20, 'Password should be of maximun 20 characters length')
+    .required('Password is required'),
+});
+
+const validationSchemaLog = yup.object({
+  email: yup
+    .string('Enter your email')
+    .email('Enter a valid email')
+    .required('Email is required'),
+  password: yup
+    .string('Enter your password')
+    .min(7, 'Password should be of minimum 7 characters length')
+    .max(20, 'Password should be of maximun 20 characters length')
+    .required('Password is required'),
+});
+
+const AuthForm = () => {
   const dispatch = useDispatch();
   const { pathname } = useLocation();
 
-  useEffect(() => {
-    setUser(initialState);
-  }, [pathname]);
+  const styles = useStyles();
 
-  const isRegisterForm = () => pathname === '/register';
+  const formik = useFormik({
+    initialValues: isRegisterForm()
+      ? {
+          name: '',
+          email: '',
+          password: '',
+        }
+      : { email: '', password: '' },
+    validationSchema: isRegisterForm()
+      ? validationSchemaReg
+      : validationSchemaLog,
+    onSubmit: values => {
+      isRegisterForm() ? dispatch(signUp(values)) : dispatch(signIn(values));
+    },
+  });
 
-  const handleChangeInput = e => {
-    const { name, value } = e.target;
-    setUser(prev => ({ ...prev, [name]: value }));
-  };
-
-  const handleSubmit = e => {
-    e.preventDefault();
-    const { email, password } = user;
-    isRegisterForm()
-      ? dispatch(signUp(user))
-      : dispatch(signIn({ email, password }));
-  };
+  function isRegisterForm() {
+    return pathname === '/register';
+  }
 
   return (
-    <form onSubmit={handleSubmit}>
-      {isRegisterForm() && (
-        <label>
-          Name
-          <input
+    <div className={styles.authContainer}>
+      <h1 className={styles.title}>Phonebook</h1>
+      <form onSubmit={formik.handleSubmit}>
+        {isRegisterForm() && (
+          <TextField
+            fullWidth
+            className={styles.input}
+            variant="outlined"
             name="name"
-            value={user.name}
-            type="text"
-            onChange={handleChangeInput}
+            label="Name"
+            value={formik.values.name}
+            onChange={formik.handleChange}
+            error={formik.touched.name && Boolean(formik.errors.name)}
+            helperText={formik.touched.name && formik.errors.name}
           />
-        </label>
-      )}
-      <label>
-        Email
-        <input
+        )}
+        <TextField
+          fullWidth
+          className={styles.input}
+          variant="outlined"
           name="email"
-          value={user.email}
-          type="email"
-          onChange={handleChangeInput}
+          label="Email"
+          value={formik.values.email}
+          onChange={formik.handleChange}
+          error={formik.touched.email && Boolean(formik.errors.email)}
+          helperText={formik.touched.email && formik.errors.email}
         />
-      </label>
-      <label>
-        Password
-        <input
+        <TextField
+          fullWidth
+          className={styles.input}
+          variant="outlined"
           name="password"
-          value={user.password}
+          label="Password"
           type="password"
-          onChange={handleChangeInput}
+          value={formik.values.password}
+          onChange={formik.handleChange}
+          error={formik.touched.password && Boolean(formik.errors.password)}
+          helperText={formik.touched.password && formik.errors.password}
         />
-      </label>
-      <button type="submit">{isRegisterForm() ? 'SignUp' : 'SignIn'}</button>
-    </form>
+        <Button
+          className={styles.btn}
+          color="primary"
+          variant="contained"
+          type="submit"
+        >
+          {isRegisterForm() ? 'register' : 'login'}
+        </Button>
+      </form>
+    </div>
   );
-}
+};
+
+export default AuthForm;

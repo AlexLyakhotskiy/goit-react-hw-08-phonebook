@@ -1,8 +1,26 @@
 .userContainer {
   display: flex;
   align-items: center;
+  .btn {
+    padding: 6px 15px;
+    min-width: 100px;
+    display: inline-flex;
+    justify-content: center;
+    align-items: center;
+  }
+}
+
+.btnIcon {
+  font-size: 30px;
+  margin-left: 15px;
+  display: inline-flex;
+  justify-content: center;
+  align-items: center;
 }
 
 .text {
+  color: white;
+  font-size: 20px;
   margin-right: 15px;
+  font-weight: bold;
 }

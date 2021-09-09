@@ -1,10 +1,7 @@
 .item {
   background-color: #d7d7ff;
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
   padding: 5px 10px;
-  min-height: 44px;
+  margin-bottom: 10px;
   width: 450px;
   // border: 1px solid #474747;
   border-radius: 5px;
@@ -12,31 +9,24 @@
     0px 2px 1px rgba(0, 0, 0, 0.2);
 }
 
-.item:not(:last-child) {
-  margin-bottom: 10px;
-}
-
-.infoWrapper {
-  display: inline-flex;
-  width: 60%;
-  justify-content: space-between;
-  font-size: 18px;
-}
-
-.text {
-  font-weight: bold;
-}
-
-.text:first-child {
-  width: 65%;
-}
-
-.text:last-child {
-  width: 35%;
-}
-
-.controllWrapper {
+.form {
   display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.labelWrapper {
+  display: flex;
+  width: 80%;
+  justify-content: space-between;
+  .input {
+    width: 49%;
+  }
+}
+
+.btnWrapper {
+  display: flex;
+  justify-content: flex-end;
 }
 
 .btn {
@@ -60,22 +50,22 @@
   }
 }
 
-.btnEdit {
+.btnCancel {
   composes: btn;
-  background-color: #ff9900;
+  background-color: #0000ff;
   &:focus,
   &:hover {
     color: #000000;
-    background-color: #ffbd5b;
+    background-color: #5555ff;
   }
 }
 
-.btnRemove {
+.btnAccept {
   composes: btn;
-  background-color: #ff0000;
+  background-color: #008000;
   &:focus,
   &:hover {
     color: #000000;
-    background-color: #ff5d5d;
+    background-color: #93b33c;
   }
 }

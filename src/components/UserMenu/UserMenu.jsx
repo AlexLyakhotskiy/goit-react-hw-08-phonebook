@@ -1,5 +1,7 @@
 import React from 'react';
 import { useSelector, useDispatch } from 'react-redux';
+import Button from '@material-ui/core/Button';
+import { MdInput } from 'react-icons/md';
 
 import { logout } from '../../redux/auth/auth-operations';
 import { getUser } from '../../redux/auth/auth-selectors';
@@ -14,10 +16,19 @@ export default function UserMenu() {
 
   return (
     <div className={styles.userContainer}>
-      <p className={styles.text}>Hello {email}</p>
-      <button type="button" onClick={handleLogOut}>
-        LogOut
-      </button>
+      <p className={styles.text}>Welcome, {email}</p>
+      <Button
+        className={styles.btn}
+        type="button"
+        color="primary"
+        variant="contained"
+        onClick={handleLogOut}
+      >
+        <span className={styles.btnText}>Logout</span>
+        <span className={styles.btnIcon}>
+          <MdInput />
+        </span>
+      </Button>
     </div>
   );
 }

@@ -1,34 +1,46 @@
-import { useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
+import { useFormik } from 'formik';
+import * as yup from 'yup';
+import TextField from '@material-ui/core/TextField';
+import Button from '@material-ui/core/Button';
 
 import { addContact } from '../../redux/contacts/contacts-operations';
 import { getContacts } from '../../redux/contacts/contacts-selectors';
 
-import styles from './ContactForm.module.css';
+import styles from './ContactForm.module.scss';
+import { toast } from 'react-toastify';
 
-const initialState = { name: '', number: '' };
+const validationSchema = yup.object({
+  name: yup
+    .string('Enter name')
+    .max(15, 'Name should be of maximun 15 characters length')
+    .required('Name is required'),
+  number: yup
+    .string('Enter phone')
+    .max(9, 'Phone should be of maximun 9 characters length')
+    .required('Phone is required'),
+});
 
 export default function ContactForm() {
-  const [contact, setContact] = useState({ ...initialState });
-
   const contacts = useSelector(getContacts);
   const dispatch = useDispatch();
 
-  const handleChangeInput = e => {
-    const { name, value } = e.target;
-    setContact(prev => ({ ...prev, [name]: value }));
-  };
+  const formik = useFormik({
+    initialValues: { name: '', number: '' },
+    validationSchema,
+    onSubmit: values => {
+      handleSubmit(values);
+    },
+  });
 
-  const handleSubmit = e => {
-    e.preventDefault();
-
+  const handleSubmit = contact => {
     if (findDuplicateContact(contact)) {
-      alert(`${contact.name} is already in contacts`);
+      toast.error(`${contact.name} is already in contacts`);
       return;
     }
 
     dispatch(addContact(contact));
-    setContact({ ...initialState });
+    formik.resetForm();
   };
 
   function findDuplicateContact(contact) {
@@ -38,36 +50,41 @@ export default function ContactForm() {
 
   return (
     <div className={styles.wrapper}>
-      <form onSubmit={handleSubmit} className={styles.form}>
-        <label className={styles.label}>
-          Name
-          <input
-            value={contact.name}
-            onChange={handleChangeInput}
-            type="text"
+      <form onSubmit={formik.handleSubmit} className={styles.form}>
+        <div className={styles.labelWrapper}>
+          <TextField
+            fullWidth
+            className={styles.input}
+            variant="outlined"
             name="name"
-            className={styles.input}
-            pattern="^[a-zA-Zа-яА-Я]+(([' -][a-zA-Zа-яА-Я ])?[a-zA-Zа-яА-Я]*)*$"
-            title="Имя может состоять только из букв, апострофа, тире и пробелов. Например Adrian, Jacob Mercer, Charles de Batz de Castelmore d'Artagnan и т. п."
-            required
+            type="text"
+            label="Name"
+            value={formik.values.name}
+            onChange={formik.handleChange}
+            error={formik.touched.name && Boolean(formik.errors.name)}
+            helperText={formik.touched.name && formik.errors.name}
           />
-        </label>
-        <label className={styles.label}>
-          Number
-          <input
-            value={contact.number}
-            onChange={handleChangeInput}
-            type="tel"
+          <TextField
+            fullWidth
+            className={styles.input}
+            variant="outlined"
             name="number"
-            className={styles.input}
-            pattern="\+?\d{1,4}?[-.\s]?\(?\d{1,3}?\)?[-.\s]?\d{1,4}[-.\s]?\d{1,4}[-.\s]?\d{1,9}"
-            title="Номер телефона должен состоять цифр и может содержать пробелы, тире, круглые скобки и может начинаться с +"
-            required
+            type="tel"
+            label="Phone"
+            value={formik.values.number}
+            onChange={formik.handleChange}
+            error={formik.touched.number && Boolean(formik.errors.number)}
+            helperText={formik.touched.number && formik.errors.number}
           />
-        </label>
-        <button className={styles.button} type="submit">
+        </div>
+        <Button
+          className={styles.btn}
+          color="primary"
+          variant="contained"
+          type="submit"
+        >
           Add contact
-        </button>
+        </Button>
       </form>
     </div>
   );

@@ -35,8 +35,16 @@ body {
     'Ubuntu', 'Cantarell', 'Fira Sans', 'Droid Sans', 'Helvetica Neue',
     sans-serif;
   color: #212121;
-  background-color: #fff;
+  background-color: #c8c8ff;
   scroll-behavior: smooth;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
+}
+
+.contactContainer {
+  padding-top: 70px;
+  position: relative;
+  display: flex;
+  justify-content: space-around;
+  align-items: baseline;
 }
