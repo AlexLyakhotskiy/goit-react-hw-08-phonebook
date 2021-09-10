@@ -6,7 +6,7 @@ export const useStyles = makeStyles({
   },
   authContainer: {
     padding: '20px',
-    margin: '15% auto',
+    margin: '8% auto',
     width: '500px',
     height: '100%',
     border: '1px solid black',

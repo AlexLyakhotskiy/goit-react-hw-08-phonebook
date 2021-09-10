@@ -1,6 +1,7 @@
 import { createSelector } from 'reselect';
 
 export const getContacts = state => state.contacts.items;
+export const getContactsError = state => state.contacts.error;
 export const getFilter = state => state.contacts.filter;
 export const getLoading = state => state.contacts.loading;
 

@@ -6,12 +6,15 @@ import ContactList from '../components/ContactList';
 import Container from '../components/Container';
 import Filter from '../components/Filter';
 import LoaderSpinner from '../components/LoaderSpinner/LoaderSpinner';
+
+import { getAuthLoading } from '../redux/auth/auth-selectors';
 import { getContacts } from '../redux/contacts/contacts-operations';
 
 import { getLoading } from '../redux/contacts/contacts-selectors';
 
 export default function ContactsPage() {
-  const loading = useSelector(getLoading);
+  const contactLoading = useSelector(getLoading);
+  const authLoading = useSelector(getAuthLoading);
   const dispatch = useDispatch();
 
   useEffect(() => {
@@ -20,7 +23,7 @@ export default function ContactsPage() {
 
   return (
     <Container className="contactContainer">
-      {loading && <LoaderSpinner />}
+      {(contactLoading || authLoading) && <LoaderSpinner />}
       <div>
         <h2>Contacts</h2>
         <ContactForm />
