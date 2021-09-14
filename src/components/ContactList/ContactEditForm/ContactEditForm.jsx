@@ -14,13 +14,17 @@ import { getContacts } from '../../../redux/contacts/contacts-selectors';
 import styles from './ContactEditForm.module.scss';
 import { toast } from 'react-toastify';
 
+const phoneRegExp =
+  /^((\\+[1-9]{1,4}[ \\-]*)|(\\([0-9]{2,3}\\)[ \\-]*)|([0-9]{2,4})[ \\-]*)*?[0-9]{3,4}?[ \\-]*[0-9]{3,4}?$/;
+
 const validationSchema = yup.object({
   name: yup
     .string('Enter your name')
     .max(15, 'Name should be of maximun 15 characters length'),
   number: yup
-    .string('Enter your number')
-    .max(9, 'Number should be of maximun 9 characters length'),
+    .string('Enter your phone number')
+    .matches(phoneRegExp, 'Phone number is not valid')
+    .nullable(),
 });
 
 export default function ContactEditForm({ id, name, number, onToggleForm }) {

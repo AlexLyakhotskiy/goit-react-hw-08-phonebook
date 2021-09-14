@@ -1,4 +1,5 @@
 import { createSlice } from '@reduxjs/toolkit';
+import { logout } from '../auth/auth-operations';
 
 import { changeFilter } from './contacts-actions';
 
@@ -22,6 +23,11 @@ const contactsSlice = createSlice({
   extraReducers: {
     [changeFilter](state, { payload }) {
       state.filter = payload;
+    },
+
+    [logout.fulfilled](state) {
+      state.items = [];
+      state.filter = '';
     },
 
     [getContacts.fulfilled](state, { payload }) {
